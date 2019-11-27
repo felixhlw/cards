@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            font-family: 'Microsoft Jhenghei';
+            font-weight: 800;
+        }
+
+        #container {
+            width: 1000px;
+            height: 100vh;
+            margin: 0 auto;
+            display: table;
+        }
+
+        #game {
+            width: 100%;
+            margin: 0 auto;
+            display: table-cell;
+            vertical-align: middle;
+            position: relative;
+
+        }
+
+        .card {
+            width: 100px;
+            height: 180px;
+            /* 設定子元素在 3D 空間內 */
+            transform-style: preserve-3d;
+            position: relative;
+            transition: transform 0.5s;
+            float: left;
+            margin: 10px;
+        }
+
+        .open {
+            transform: rotateY(180deg);
+        }
+
+        .front {
+            width: 100%;
+            height: 100%;
+            background-image: url(./card/Red_back.jpg);
+            background-position: center;
+            background-size: contain;
+            background-repeat: no-repeat;
+            position: absolute;
+/*             opacity: 0.3; */
+        }
+
+        .back {
+            width: 100%;
+            height: 100%;
+            background-position: center;
+            background-size: contain;
+            background-repeat: no-repeat;
+            position: absolute;
+            transform: rotateY(180deg);
+
+        }
+
+        .start {
+            position: absolute;
+            margin: 0 auto;
+            margin-top: 20px;
+            padding: 10px 30px;
+            border: solid 1px gray;
+            color: rgba(0, 0, 0, 1);
+            background: linear-gradient(to top, rgba(237, 255, 237, 0.945), rgba(21, 155, 21, 0.1) 70%);
+            border-radius: 15px;
+            font-size: 20px;
+            top: 82%;
+            left: 43%;
+            text-align: center;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.1s;
+
+
+        }
+
+        .start:hover {
+            transform-origin: 50%;
+            transform: scale(1.2);
+        }
+        .start:active{
+            transform: scale(1.1);
+
+            color: red;
+        }
+
+        .center {
+            width: 500px;
+            margin: 0 auto;
+            margin-top: -150px;
+            margin-bottom: 30px;
+            position: relative;
+
+        }
+
+        .see {
+            color: white;
+            display: inline-block;
+            padding: 10px 20px;
+            border: solid 1px white;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            cursor: pointer;    
+            transition: all 0.1s;
+        }
+        .see:hover {
+            transform-origin: 50%;
+            transform: scale(1.3);
+        }
+        .see:active{
+            transform: scale(1.1);
+
+            color: red;
+        }
+
+        .timer {
+            color: white;
+            display: inline-block;
+            float: right;
+            padding: 10px 20px;
+            border: solid 1px white;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            /* position: absolute; */
+            /*         top: 10%; */
+            /*             left: calc(50% + 50px); */
+
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div id="game">
+            <div class="center">
+
+                <div class="see">透視功能 </div>
+
+                <div class="timer">花費時間: <span class="sec">0</span> 秒</div>
+            </div>
+            <button class="start">開始遊戲</button>
+        </div>
+    </div>
+    <script src="./jquery-3.4.1.min.js"></script>
+    <script>
+        $(function () {
+            let score = 0;
+            let sec = 0;
+            let gametimer = 0;
+            let ingame = false;
+            let num = 16
+            
+         
+            // 產生 16 張卡片
+            for (let i = 0; i < num; i++) {
+                $("#game").append( /*html*/ `<div class="card">
+                        <div class="front"></div>
+                        <div class="back"></div>
+                    </div>
+                `)
+            }
+            
+            let randcard = ()=>{  //這邊是打亂牌的亂數函式
+                for (let i = 0; i < $(".card").length; i++) {
+                    /*
+                        每個數字要有兩個同樣的才能消除
+                        以 16 張牌來說，就會是2組數字1~8的牌，也就是16/2 = 8
+                        然後以 i / 8 的餘數來判斷要加哪張牌
+                        若i為0，則 0/8 的餘數為0，以此類推
+                        因為牌號從 1 開始，所以要加 1
+                    */
+                    //這邊.card.length 是16
+                    let add = i % ($(".card").length / 2) + 1;
+                    /*                console.log(add); */
+
+                    $(".card").eq(i).find(".back").css("background-image", `url(./card/${add}S.jpg)`);
+                    $(".card").eq(i).attr("data-card", add);
+
+                    //打亂牌的順序，這邊隨機取0~15位置的一張牌，將他放在目前迴圈跑到的牌後
+                    let target = Math.floor(Math.random() * $(".card").length);
+    /*                 console.log(target); */
+                    $(".card").eq(target).insertAfter($(".card").eq(i));
+                }
+            }
+            $(".see").on("click",function(){
+                    if (!ingame) {
+                        alert("按下開始遊戲才能用喔!");
+                    }else{
+                        return;
+                    }
+            })
+            //遊戲開始，產生亂數牌及剩計時顯示      
+            $(".start").on("click", function () {
+                $(".card").addClass("open");
+                setTimeout(() => {
+                    $(".card").removeClass("open"); 
+                }, 500);
+
+                randcard();
+                ingame = true;
+                //重設時間及分數 
+                sec = 0;
+                $(".sec").text(sec);
+                /* score = 0; */
+                /* $(".score").text(score); */
+                //將消失的牌重新出現
+                $(".card").removeClass("clear").css('opacity',1); 
+
+                $(".see").on("click",function(){
+       
+                    $(".front").fadeTo(500,0.2);
+                    setTimeout(() => {
+                        $(".front").fadeTo(500,1);
+                }, 1500);
+                    
+                })
+
+                //開始計時
+                //每秒加1，修改文字呈現
+                gametimer = setInterval(() => {
+                    sec++;
+                    $(".sec").text(sec);
+
+
+                }, 1000) 
+
+
+            })
+
+            $(".card").on("click", function () {
+                if (!ingame) {
+                    return;
+                }
+
+                // 如果翻開的牌小於兩張，且這張還沒翻開，增加"open"註記
+                if ($(".open").length < 2 && !$(this).hasClass("open")) {
+                    $(this).addClass("open");
+                }
+
+                // 如果翻開兩張了
+                if ($(".open").length == 2) {
+                    // 一秒後翻回來
+                    setTimeout(() => {
+                        $(".open").removeClass("open");
+                    }, 1000)
+
+                    // 如果兩張一樣，淡出
+                    if ($(".open").eq(0).attr("data-card") == $(".open").eq(1).attr(
+                            "data-card")) {
+                        $(".open").fadeTo(1000, 0).addClass("clear");
+/*                         score++;
+                        $(".score").text(score); */
+                    }
+                }
+
+                // 如果全部都 clear
+                if ($(".clear").length == $(".card").length) {
+                    a=$(".clear").length;
+                    console.log(a);
+                    
+                    clearInterval(gametimer);
+                    setTimeout(() => {
+                        alert("恭喜過關");
+                    }, 500);
+                    setTimeout(() => {
+                    $(".start").text("再玩一次");
+                    }, 1000);
+                }
+
+
+            })
+        })
+    </script>
+
+    <!-- new Date().getTime() 1970/1/1 到現在 -->
+
+
+</body>
+
+</html>
