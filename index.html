@@ -11,22 +11,52 @@
             font-family: 'Microsoft Jhenghei';
             font-weight: 800;
         }
+        
 
         #container {
-            width: 1000px;
+            width: 100vw;
             height: 100vh;
+            margin: 0;
+            margin-left: -10px;
+            padding: 0 0px 0 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /* position: relative; */
+        }
+
+        .title {
+            /* position: absolute; */
+            padding: 0 10px 0 0;
+            width: 100vw;
+            height: 10%;
             margin: 0 auto;
-            display: table;
+            margin-top: -90px;
+            text-align: center;
+            color: white;
+            /* position: relative; */
+            /* margin: 50px 0 100px 0; */
+        }
+
+        .info {
+            width: 60%;
+            height: 10%;
+            /* position: relative; */
         }
 
         #game {
-            width: 100%;
+            width: 1000px;
+            height: 50%;
             margin: 0 auto;
-            display: table-cell;
-            vertical-align: middle;
-            position: relative;
+            padding-left: 30px;
+            /* margin-left: 10px; */
+            /* display: table-cell; */
+            /* vertical-align: middle; */
+            /* position: absolute; */
 
         }
+
 
         .card {
             width: 100px;
@@ -37,6 +67,8 @@
             transition: transform 0.5s;
             float: left;
             margin: 10px;
+            
+
         }
 
         .open {
@@ -51,7 +83,8 @@
             background-size: contain;
             background-repeat: no-repeat;
             position: absolute;
-/*             opacity: 0.3; */
+            
+            /*             opacity: 0.3; */
         }
 
         .back {
@@ -62,21 +95,21 @@
             background-repeat: no-repeat;
             position: absolute;
             transform: rotateY(180deg);
-
+            
         }
 
         .start {
-            position: absolute;
+            /* position: relative; */
             margin: 0 auto;
             margin-top: 20px;
             padding: 10px 30px;
-            border: solid 1px gray;
-            color: rgba(0, 0, 0, 1);
+            border: solid 1px rgb(241, 241, 241);
+            color: rgb(255, 255, 255);
             background: linear-gradient(to top, rgba(237, 255, 237, 0.945), rgba(21, 155, 21, 0.1) 70%);
             border-radius: 15px;
             font-size: 20px;
             top: 82%;
-            left: 43%;
+            left: 45%;
             text-align: center;
             outline: none;
             cursor: pointer;
@@ -89,20 +122,32 @@
             transform-origin: 50%;
             transform: scale(1.2);
         }
-        .start:active{
+
+        .start:active {
             transform: scale(1.1);
 
             color: red;
         }
 
-        .center {
-            width: 500px;
+        .start-disabled {
+            /* position: absolute; */
             margin: 0 auto;
-            margin-top: -150px;
-            margin-bottom: 30px;
-            position: relative;
+            margin-top: 20px;
+            padding: 10px 30px;
+            border: solid 1px gray;
+            color: rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to top, rgba(237, 255, 237, 0.945), rgba(21, 155, 21, 0.1) 70%);
+            border-radius: 15px;
+            font-size: 20px;
+            top: 82%;
+            left: 43%;
+            text-align: center;
+            outline: none;
+            transition: all 0.1s;
 
         }
+
+
 
         .see {
             color: white;
@@ -111,14 +156,17 @@
             border: solid 1px white;
             border-radius: 10px;
             background: rgba(0, 0, 0, 0.2);
-            cursor: pointer;    
+            cursor: pointer;
             transition: all 0.1s;
+            /* position: absolute; */
         }
+
         .see:hover {
             transform-origin: 50%;
             transform: scale(1.3);
         }
-        .see:active{
+
+        .see:active {
             transform: scale(1.1);
 
             color: red;
@@ -137,153 +185,183 @@
             /*             left: calc(50% + 50px); */
 
         }
+        #particles {
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+            z-index: -1;
+            background-image: linear-gradient(rgba(255, 159, 80, 0.637), rgba(142, 78, 246, 0.411)),url(./1.png);
+            background-position: center;
+            background-attachment: fixed;
+            background-size: cover;
+            top: 0;
+            left: 0;
+        }
     </style>
 </head>
 
-<body>
+<body style="background: gray;">
+    <div id="particles"></div>
     <div id="container">
+        <div class="title"><h1>卡牌消消樂</h1></div>
+        <div class="info">
+            <div class="see">透視功能 </div>
+            <div class="timer">花費時間: <span class="sec">0</span> 秒</div>
+        </div>
         <div id="game">
-            <div class="center">
 
-                <div class="see">透視功能 </div>
-
-                <div class="timer">花費時間: <span class="sec">0</span> 秒</div>
-            </div>
+        </div>
+        <div>
             <button class="start">開始遊戲</button>
         </div>
     </div>
-    <script src="./jquery-3.4.1.min.js"></script>
-    <script>
-        $(function () {
-            let score = 0;
-            let sec = 0;
-            let gametimer = 0;
-            let ingame = false;
-            let num = 16
-            
-         
-            // 產生 16 張卡片
-            for (let i = 0; i < num; i++) {
-                $("#game").append( /*html*/ `<div class="card">
+        <script src="./jquery-3.4.1.min.js"></script>
+        
+ 
+        <script>
+            $(function () {
+                let score = 0;
+                let sec = 0;
+                let gametimer = 0;
+                let ingame = false;
+                let num = 16
+
+
+                // 產生 16 張卡片
+                for (let i = 0; i < num; i++) {
+                    $("#game").append( /*html*/ `<div class="card">
                         <div class="front"></div>
                         <div class="back"></div>
                     </div>
                 `)
-            }
-            
-            let randcard = ()=>{  //這邊是打亂牌的亂數函式
-                for (let i = 0; i < $(".card").length; i++) {
-                    /*
-                        每個數字要有兩個同樣的才能消除
-                        以 16 張牌來說，就會是2組數字1~8的牌，也就是16/2 = 8
-                        然後以 i / 8 的餘數來判斷要加哪張牌
-                        若i為0，則 0/8 的餘數為0，以此類推
-                        因為牌號從 1 開始，所以要加 1
-                    */
-                    //這邊.card.length 是16
-                    let add = i % ($(".card").length / 2) + 1;
-                    /*                console.log(add); */
-
-                    $(".card").eq(i).find(".back").css("background-image", `url(./card/${add}S.jpg)`);
-                    $(".card").eq(i).attr("data-card", add);
-
-                    //打亂牌的順序，這邊隨機取0~15位置的一張牌，將他放在目前迴圈跑到的牌後
-                    let target = Math.floor(Math.random() * $(".card").length);
-    /*                 console.log(target); */
-                    $(".card").eq(target).insertAfter($(".card").eq(i));
                 }
-            }
-            $(".see").on("click",function(){
+
+                let randcard = () => { //這邊是打亂牌的亂數函式
+                    for (let i = 0; i < $(".card").length; i++) {
+                        /*
+                            每個數字要有兩個同樣的才能消除
+                            以 16 張牌來說，就會是2組數字1~8的牌，也就是16/2 = 8
+                            然後以 i / 8 的餘數來判斷要加哪張牌
+                            若i為0，則 0/8 的餘數為0，以此類推
+                            因為牌號從 1 開始，所以要加 1
+                        */
+                        //這邊.card.length 是16
+                        let add = i % ($(".card").length / 2) + 1;
+                        /*                console.log(add); */
+
+                        $(".card").eq(i).find(".back").css("background-image", `url(./card/${add}S.jpg)`);
+                        $(".card").eq(i).attr("data-card", add);
+
+                        //打亂牌的順序，這邊隨機取0~15位置的一張牌，將他放在目前迴圈跑到的牌後
+                        let target = Math.floor(Math.random() * $(".card").length);
+                        /*                 console.log(target); */
+                        $(".card").eq(target).insertAfter($(".card").eq(i));
+                    }
+                }
+                $(".see").on("click", function () {
                     if (!ingame) {
                         alert("按下開始遊戲才能用喔!");
-                    }else{
+                    } else {
                         return;
                     }
-            })
-            //遊戲開始，產生亂數牌及剩計時顯示      
-            $(".start").on("click", function () {
-                $(".card").addClass("open");
-                setTimeout(() => {
-                    $(".card").removeClass("open"); 
-                }, 500);
-
-                randcard();
-                ingame = true;
-                //重設時間及分數 
-                sec = 0;
-                $(".sec").text(sec);
-                /* score = 0; */
-                /* $(".score").text(score); */
-                //將消失的牌重新出現
-                $(".card").removeClass("clear").css('opacity',1); 
-
-                $(".see").on("click",function(){
-       
-                    $(".front").fadeTo(500,0.2);
-                    setTimeout(() => {
-                        $(".front").fadeTo(500,1);
-                }, 1500);
-                    
                 })
-
-                //開始計時
-                //每秒加1，修改文字呈現
-                gametimer = setInterval(() => {
-                    sec++;
-                    $(".sec").text(sec);
-
-
-                }, 1000) 
-
-
-            })
-
-            $(".card").on("click", function () {
-                if (!ingame) {
-                    return;
-                }
-
-                // 如果翻開的牌小於兩張，且這張還沒翻開，增加"open"註記
-                if ($(".open").length < 2 && !$(this).hasClass("open")) {
-                    $(this).addClass("open");
-                }
-
-                // 如果翻開兩張了
-                if ($(".open").length == 2) {
-                    // 一秒後翻回來
+                //遊戲開始，產生亂數牌及剩計時顯示      
+                $(".start").on("click", function () {
+                    $(".start").attr("disabled", true).removeClass("start").addClass("start-disabled");
+                    $(".card").addClass("open");
                     setTimeout(() => {
-                        $(".open").removeClass("open");
+                        $(".card").removeClass("open");
+                    }, 500);
+
+                    randcard();
+                    ingame = true;
+                    //重設時間及分數 
+                    sec = 0;
+                    $(".sec").text(sec);
+                    /* score = 0; */
+                    /* $(".score").text(score); */
+                    //將消失的牌重新出現
+                    $(".card").removeClass("clear").css('opacity', 1);
+
+                    $(".see").on("click", function () {
+
+                        $(".front").fadeTo(500, 0.2);
+                        setTimeout(() => {
+                            $(".front").fadeTo(500, 1);
+                        }, 1500);
+
+                    })
+
+                    //開始計時
+                    //每秒加1，修改文字呈現
+                    gametimer = setInterval(() => {
+                        sec++;
+                        $(".sec").text(sec);
+
+
                     }, 1000)
 
-                    // 如果兩張一樣，淡出
-                    if ($(".open").eq(0).attr("data-card") == $(".open").eq(1).attr(
-                            "data-card")) {
-                        $(".open").fadeTo(1000, 0).addClass("clear");
-/*                         score++;
-                        $(".score").text(score); */
+
+                })
+
+                $(".card").on("click", function () {
+                    if (!ingame) {
+                        return;
                     }
-                }
 
-                // 如果全部都 clear
-                if ($(".clear").length == $(".card").length) {
-                    a=$(".clear").length;
-                    console.log(a);
-                    
-                    clearInterval(gametimer);
-                    setTimeout(() => {
-                        alert("恭喜過關");
-                    }, 500);
-                    setTimeout(() => {
-                    $(".start").text("再玩一次");
-                    }, 1000);
-                }
+                    // 如果翻開的牌小於兩張，且這張還沒翻開，增加"open"註記
+                    if ($(".open").length < 2 && !$(this).hasClass("open")) {
+                        $(this).addClass("open");
+                    }
+
+                    // 如果翻開兩張了
+                    if ($(".open").length == 2) {
+                        // 一秒後翻回來
+                        setTimeout(() => {
+                            $(".open").removeClass("open");
+                        }, 1000)
+
+                        // 如果兩張一樣，淡出
+                        if ($(".open").eq(0).attr("data-card") == $(".open").eq(1).attr(
+                                "data-card")) {
+                            $(".open").fadeTo(1000, 0).addClass("clear");
+                            /*                         score++;
+                                                    $(".score").text(score); */
+                        }
+                    }
+
+                    // 如果全部都 clear
+                    if ($(".clear").length == $(".card").length) {
+                        a = $(".clear").length;
+                        console.log(a);
+
+                        clearInterval(gametimer);
+                        setTimeout(() => {
+                            alert("恭喜您全部清除!");
+                        }, 500);
+                        setTimeout(() => {
+                            $(".start-disabled").addClass("start").removeClass("start-disabled")
+                                .attr("disabled", false);
+                            $(".start").text("再玩一次");
+                        }, 1000);
+                    }
 
 
+                })
             })
-        })
+
+        </script>
+    <script src="./particles.min.js"></script>
+    <script>
+        // .load(div的id, 設定檔路徑, 載入完成時的 function)
+        particlesJS.load('particles', 'particlesjs-config.json', () => {
+            console.log('callback - particles.js config loaded');
+        });
     </script>
 
-    <!-- new Date().getTime() 1970/1/1 到現在 -->
+
+
+        <!-- new Date().getTime() 1970/1/1 到現在 -->
 
 
 </body>
