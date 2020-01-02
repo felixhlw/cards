@@ -78,7 +78,7 @@
         .front {
             width: 100%;
             height: 100%;
-            background-image: url(./card/Red_back.jpg);
+            background-image: url(./card/blue_back.png);
             background-position: center;
             background-size: contain;
             background-repeat: no-repeat;
@@ -248,8 +248,11 @@
                         //這邊.card.length 是16
                         let add = i % ($(".card").length / 2) + 1;
                         /*                console.log(add); */
+if(!ingame){
+    $(".card").eq(i).find(".front").css("background-image", `url(./card/red_back.png)`);
+}
 
-                        $(".card").eq(i).find(".back").css("background-image", `url(./card/${add}S.jpg)`);
+                        $(".card").eq(i).find(".back").css("background-image", `url(./card/${add}S.png)`);
                         $(".card").eq(i).attr("data-card", add);
 
                         //打亂牌的順序，這邊隨機取0~15位置的一張牌，將他放在目前迴圈跑到的牌後
